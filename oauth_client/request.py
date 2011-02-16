@@ -66,21 +66,21 @@ class Request(object):
             else:
                 raise NotImplementedError(
                     'parameter_method=%r' % parameter_method)
+            
         else:
+            exc = NotImplementedError('add_oauth_params')
+            
             for method in ['header', 'query', 'body']:
                 try:
                     self.add_oauth_params(method, **kwargs)
                     break
                 except NotImplementedError:
                     pass
+                except Exception, exc:
+                    pass
             else:
-                raise NotImplementedError('add_oauth_params')
+                raise exc
                 
-    def get_base_string_parts(self):
-        # Return (http_method, http_uri, http_body_params)
-        # See 3.4.1.3.1 for info on when to return http_body_params
-        raise NotImplementedError('Request.get_base_string_parts')
-       
     def add_oauth_header(self):
         raise NotImplementedError('Request.add_oauth_header')
         
@@ -90,9 +90,11 @@ class Request(object):
     def add_oauth_body(self):
         raise NotImplementedError('Request.add_oauth_body')
     
-    def open(self):
-        raise NotImplementedError('Request.open')
-        
+    def get_base_string_parts(self):
+        # Return (http_method, http_uri, http_body_params)
+        # See 3.4.1.3.1 for info on when to return http_body_params
+        raise NotImplementedError('Request.get_base_string_parts')
+       
     
 class HttpRequest(Request):
     """Dummy/example Request implementation"""
