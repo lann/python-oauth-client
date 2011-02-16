@@ -4,6 +4,7 @@ import urlparse
 import signing
 import util
 
+OAUTH_VERSION = '1.0'
 ENTITY_BODY_CONTENT_TYPE = 'application/x-www-form-urlencoded'
 
 class Request(object):
@@ -35,6 +36,7 @@ class Request(object):
         params.update(('oauth_' % k, params.pop(k))
                       for k in params if not k.startswith('oauth_'))
         
+        params.update(oauth_version=OAUTH_VERSION)
         params.update(oauth_consumer_key=self.client.identifier)
         if self.token:
             params.update(oauth_token=self.token.identifier)
