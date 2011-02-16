@@ -68,6 +68,8 @@ class SignatureMethod(object):
         if host.endswith(default_port):
             host = host[:-len(default_port)]
                         
+        path = path or '/'
+            
         base_string.append(
             util.oauth_encode(
                 urlparse.urlunsplit((scheme, host, path, '', ''))))
@@ -83,6 +85,8 @@ class SignatureMethod(object):
             if hasattr(http_params, 'split'):
                 http_params = compat.parse_qsl(
                     http_params, keep_blank_values=True)
+            elif hasattr(http_params, 'items'):
+                http_params = http_params.items()
             params.extend(http_params)
 
         encoded_params = sorted(
