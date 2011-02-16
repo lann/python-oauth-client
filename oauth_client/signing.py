@@ -68,7 +68,9 @@ class SignatureMethod(object):
         if host.endswith(default_port):
             host = host[:-len(default_port)]
                         
-        base_string.append(urlparse.urlunsplit((scheme, host, path, '', '')))
+        base_string.append(
+            util.oauth_encode(
+                urlparse.urlunsplit((scheme, host, path, '', ''))))
         
         # Request Parameters (3.4.1.3)
         params = compat.parse_qsl(query)
