@@ -1,8 +1,8 @@
 import urllib2
    
-from oauth_client import adapter
-from oauth_client import util
-from oauth_client.request import ENTITY_BODY_CONTENT_TYPE
+import base as adapter
+from .. import util
+from ..request import ENTITY_BODY_CONTENT_TYPE
 
 class Adapter(adapter.RequestAdapter):
     # Signing interface
