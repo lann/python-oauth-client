@@ -1,4 +1,3 @@
-import urllib
 import urlparse
 
 import signing
@@ -33,7 +32,7 @@ class Request(object):
         
     def build_parameters(self, **extra_parameters):
         params = dict(self.parameters, **extra_parameters)
-        params.update(('oauth_' % k, params.pop(k))
+        params.update(('oauth_%s' % k, params.pop(k))
                       for k in params if not k.startswith('oauth_'))
         
         params.update(oauth_version=OAUTH_VERSION)
@@ -115,11 +114,7 @@ class HttpRequest(Request):
 
     def add_oauth_query(self, **kwargs):
         scheme, host, path, url_qs, frag = urlparse.urlsplit(self.url)
-
-        qs = urllib.urlencode(self.build_parameters(**kwargs))
-        if url_qs:
-            qs = '%s&%s' % (url_qs, qs)
-        
+        qs = util.qs_extend(url_qs, self.build_parameters(**kwargs))
         self.url = urlparse.urlunsplit((scheme, host, path, qs, frag))
         
 

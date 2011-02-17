@@ -1,4 +1,4 @@
-import request
+from oauth_client import request
 
 class RequestAdapter(request.Request):
     """Provide OAuth functionality to a wrapped HTTP request object"""
@@ -33,7 +33,7 @@ class RequestAdapter(request.Request):
             if method:
                 val = method()
             elif attr_name:
-                val = getattr(self.request, attr_name)
+                val = getattr(self.wrapped, attr_name)
                 if callable(val):
                     val = val()
             else:
@@ -52,12 +52,11 @@ class RequestAdapter(request.Request):
         raise NotImplementedError('fetch')
         
 class Response(object):
-    def __init__(self, content, code=None, message=None, headers=None):
+    def __init__(self, content, code=None, headers=None):
         self.content = content
-        self.code = int(code or 0)
-        self.message = message or ''
+        self.code = int(code or 200)
         self.headers = headers or {}
-        
+
     def __str__(self):
         if hasattr(self.content, 'read'):
             return self.content.read()
