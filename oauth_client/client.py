@@ -38,8 +38,6 @@ class Client(object):
         if 'oauth_callback' not in self.fetch_parameters:
             kwargs.setdefault('oauth_callback', 'oob')
         
-        kwargs.setdefault(raise_http_errors=True)
-           
         resp = self.fetch(url, **kwargs)
         
         temp = util.Credentials.build(str(resp))
@@ -56,16 +54,15 @@ class Client(object):
         if not url:
             raise ValueError('access_token_url')
             
+        kwargs['token'] = util.Credentials.build(temporary_credentials)
+        
         if 'oauth_verifier=' in verifier:
             verifier = dict(
                 compat.parse_qsl(verifier.split('?')[-1]))['oauth_verifier']
         elif hasattr(verifier, 'get'):
             verifier = verifier.get('oauth_verifier')
-        
         kwargs['oauth_verifier'] = verifier
             
-        kwargs.setdefault(raise_http_errors=True)
-        
         resp = self.fetch(url, **kwargs)
             
         return util.Credentials.build(str(resp))
