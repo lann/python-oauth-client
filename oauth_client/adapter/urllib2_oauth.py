@@ -14,7 +14,7 @@ class Adapter(adapter.RequestAdapter):
         req = self.wrapped
         content_type = req.get_header(
             'Content-Type', ENTITY_BODY_CONTENT_TYPE)
-        if req.data and content_type == ENTITY_BODY_CONTENT_TYPE:
+        if req.data is not None and content_type == ENTITY_BODY_CONTENT_TYPE:
             return req.data
         else:
             return None
@@ -37,16 +37,17 @@ class Adapter(adapter.RequestAdapter):
     @classmethod
     def fetch(cls, url, data=None, method='GET', headers={},
               **signing_parameters):
-        if method not in ['GET', 'POST']:
-            raise ValueError(
-                'urllib2 does not support HTTP method %r' % method)
         
         if method == 'POST' and data is None:
             data = ''
             
         req = Request(url, data=data, headers=headers)
-        req.oauth_sign(**signing_parameters)
     
+        if method not in ['GET', 'POST']:
+            req.oauth_method = method
+            
+        req.oauth_sign(**signing_parameters)
+        
         try:
             resp = urllib2.urlopen(req)
         except urllib2.HTTPError, resp:
@@ -55,3 +56,10 @@ class Adapter(adapter.RequestAdapter):
         
 class Request(urllib2.Request, adapter.AdapterMixin):
     oauth_adapter_cls = Adapter
+    
+    def get_method(self):
+        if getattr(self, 'oauth_method', None) is None:
+            return super(Request, self).get_method()
+        else:
+            return self.oauth_method
+    
