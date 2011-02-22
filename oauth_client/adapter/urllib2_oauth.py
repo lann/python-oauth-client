@@ -37,17 +37,12 @@ class Adapter(adapter.RequestAdapter):
     @classmethod
     def fetch(cls, url, data=None, method='GET', headers={},
               **signing_parameters):
-        if method == 'POST' and not data:
-            param_method = signing_parameters.setdefault(
-                'parameter_method', 'body')
-            
-            if param_method != 'body':
-                raise ValueError('cannot POST with data=None and '
-                                 'parameter_method=%r' % param_method)
-            
-        elif method not in ['GET', 'POST']:
+        if method not in ['GET', 'POST']:
             raise ValueError(
                 'urllib2 does not support HTTP method %r' % method)
+        
+        if method == 'POST' and data is None:
+            data = ''
             
         req = Request(url, data=data, headers=headers)
         req.oauth_sign(**signing_parameters)
