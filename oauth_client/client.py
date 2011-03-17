@@ -13,6 +13,9 @@ class Client(object):
         self.fetch_parameters = dict(client=client, token=token,
                                      **fetch_parameters)
 
+    def set_token(self, token):
+        self.fetch_parameters['token'] = token
+
     def fetch(self, *args, **kwargs):
         raise_errs = kwargs.pop('raise_http_errors', False)
         kwargs = dict(self.fetch_parameters, **kwargs)
