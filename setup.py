@@ -5,7 +5,7 @@ from setuptools import setup
 setup(
     name = 'oauth-client',
     version = '0.1',
-    packages = ['oauth_client'],
+    packages = ['oauth_client', 'oauth_client.adapter'],
     
     author = 'Lann Martin',
     author_email = 'oauth-client@lannbox.com',
